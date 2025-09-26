@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Grand Guild Roster - Master Class Edition</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Cinzel (Medieval/Fantasy Font) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Base Styles for Dark Room/Stone Background */
+        body {
+            font-family: 'Cinzel', serif;
+            background-color: #211c18; /* Very dark wood/stone */
+            color: #d1d5db; /* Light Gray Text (mostly for outside the scroll) */
+        }
+        
+        /* App Container styled as a Parchment Scroll with Torch Glow */
+        .app-container {
+            max-width: 900px;
+            margin: 2rem auto; /* Added margin to show body background */
+            padding: 1.5rem;
+            min-height: calc(100vh - 4rem); /* Occupy full height minus margins */
+            
+            /* Parchment Appearance */
+            background-color: #fcf8e8; /* Light parchment color */
+            color: #4b443a; /* Sepia text for readability on parchment */
+            
+            /* Burnt/Aged Border Effect using border-image (or complex texture) */
+            /* Using a subtle dark border and complex shadows to simulate burnt edge/depth */
+            border: 4px solid #a0522d; /* Sienna border for definition */
+            border-radius: 4px;
+            box-shadow: 
+                0 0 15px rgba(0, 0, 0, 0.7), /* Standard Shadow for depth */
+                inset 0 0 15px rgba(100, 50, 0, 0.2); /* Inner shadow for texture */
+            position: relative;
+            z-index: 10;
+        }
+
+        /* --- Torch Ambiance Simulation --- */
+        /* Use pseudo-elements to simulate a radial-gradient orange/yellow glow */
+        .app-container::before, .app-container::after {
+            content: '';
+            position: absolute;
+            top: -50px; /* Position above the scroll to mimic light source */
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: radial-gradient(circle at center, rgba(255, 180, 0, 0.7) 0%, rgba(255, 80, 0, 0.1) 50%, transparent 70%);
+            opacity: 0.8;
+            filter: blur(15px); /* Soften the light */
+            z-index: 0;
+            pointer-events: none;
+            animation: torch-flicker 3s infinite alternate;
+        }
+        .app-container::before {
+            left: -75px; /* Far left side */
+            transform: scale(0.9);
+        }
+        .app-container::after {
+            right: -75px; /* Far right side */
+            transform: scale(1.1);
+        }
+
+        @keyframes torch-flicker {
+            0% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 0.9; transform: scale(1.05); }
+            100% { opacity: 0.75; transform: scale(0.95); }
+        }
+        /* --- End Torch Ambiance --- */
+
+
+        /* Header Styling Adjustments for Parchment */
+        .rpg-header {
+            border-bottom: 3px solid #8b4513; /* Sienna/Sepia underline */
+            background-color: transparent; /* No background on parchment */
+            border-radius: 0; /* Remove rounded corners */
+            padding: 1.5rem 0;
+            box-shadow: none;
+        }
+        .rpg-header h1, .rpg-header h2 {
+            color: #8b4513; /* Darker brown/sienna for titles */
+            text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5); /* Light text shadow for contrast */
+        }
+        .rpg-header .text-red-500 {
+            color: #b91c1c; /* Deep Red for emphasis */
+        }
+        /* Editable Description Styling */
+        #guild-description-container:focus {
+            background-color: #fff8e0; /* Highlight on focus */
+            outline: none;
+        }
+
+
+        /* Card Styling (Simulating Inner Parchment/Paper) */
+        .rpg-card {
+            background-color: #ede7d3; /* Slightly darker parchment than container */
+            color: #4b443a; /* Dark text on light background */
+            border: 2px solid #6d5b4e; /* Sepia border */
+            box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease-in-out;
+        }
+        .rpg-card:hover {
+             transform: translateY(-2px);
+             box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* EXP Bar Styling */
+        .exp-bar {
+            height: 10px;
+            border-radius: 5px;
+            background-color: #d4c7b2; /* Lighter Sepia/Stone Gray */
+            border: 1px solid #a0522d;
+        }
+        .exp-fill {
+            transition: width 0.5s ease-in-out;
+            background-color: #1D4ED8; /* Noble Blue (High Contrast) */
+        }
+        
+        /* Button Styling (Styled like medieval crests/badges) */
+        .exp-btn {
+            box-shadow: 2px 2px 0 0 rgba(0,0,0,0.5);
+            transition: all 0.1s;
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+        }
+        .exp-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: none;
+        }
+
+        /* Specific colors for EXP buttons */
+        .btn-penalty { background-color: #B91C1C; } /* New: Red for penalty */
+        .btn-penalty:hover { background-color: #991B1B; }
+
+        .btn-exp-1 { background-color: #10B981; } 
+        .btn-exp-2 { background-color: #FBBF24; } 
+        .btn-exp-3 { background-color: #1D4ED8; } 
+
+        .btn-exp-1:hover { background-color: #059669; }
+        .btn-exp-2:hover { background-color: #f59e0b; }
+        .btn-exp-3:hover { background-color: #2563EB; }
+        
+        /* Job Promotion Button */
+        .btn-promote {
+            background-color: #8b5cf6; 
+        }
+        .btn-promote:hover {
+            background-color: #7c3aed;
+        }
+
+        /* Job Tag Colors */
+        .tag-newbie { background-color: #f59e0b; color: #4b443a; }
+        .tag-job-available { background-color: #FBBF24; color: #B91C1C; } 
+        .tag-job-active { background-color: #1D4ED8; color: #FFFFFF; } 
+        /* Master Tag */
+        .tag-master { background-color: #f97316; color: #fff; } /* Orange */
+
+        /* Select Dropdown Styling */
+        #guild-logo-select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23FBBF24'%3E%3Cpath d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd' fill-rule='evenodd'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            background-size: 1.5em;
+            padding-right: 2.5rem !important; 
+        }
+
+        /* Text color adjustments for forms/inputs */
+        .text-yellow-500 { color: #FBBF24; } /* Keeps gold accent */
+        .text-gray-600, .text-gray-800 { color: #4b443a; } /* Sepia/Brown text */
+
+        /* Input specific styling */
+        #guild-title-edit-container {
+             background-color: #e8e1cd; /* Slightly different shade for edit box */
+             border-color: #8b4513;
+        }
+        #guild-title-edit-container input, #guild-title-edit-container select {
+             background-color: #fffaf0; /* Near-white input fields */
+             color: #4b443a;
+             border-color: #a0522d;
+        }
+
+        #auth-info {
+            background-color: #fcf8e8;
+            border-color: #a0522d;
+            color: #4b443a;
+        }
+        #auth-info .text-blue-400 { color: #1D4ED8; }
+        
+        /* Modal Job Cards */
+        .job-card-modal {
+             background-color: #fffaf0;
+             border: 2px solid #8b4513;
+             transition: all 0.2s ease-in-out;
+        }
+        .job-card-modal:hover {
+            background-color: #ffffe6;
+            border-color: #1D4ED8;
+            transform: translateY(-2px);
+        }
+
+        /* --- Overflow EXP Styles (Orange with Lightning) --- */
+        @keyframes xp-lightning-glow {
+            0%, 100% {
+                box-shadow: 0 0 10px rgba(255, 165, 0, 0.8), 0 0 20px rgba(255, 165, 0, 0.4);
+                border-color: #f97316;
+                background-color: #6d28d9; /* Deep Purple base */
+                color: #fcd34d !important; /* Yellow text */
+            }
+            50% {
+                box-shadow: 0 0 15px #facc15, 0 0 30px #facc15;
+                border-color: #facc15;
+                background-color: #8b5cf6; /* Light Purple flash */
+            }
+        }
+        .xp-overflow-card {
+            color: #fcd34d !important; /* Yellow text for contrast */
+            animation: xp-lightning-glow 1.5s ease-in-out infinite alternate;
+            border-color: #f97316 !important;
+            background-color: #312e81 !important; /* Dark Indigo background */
+        }
+        .xp-overflow-text {
+            color: #fcd34d !important; /* Yellow */
+            text-shadow: 1px 1px 2px #4b443a;
+        }
+        .xp-overflow-fill {
+            background-color: #f97316 !important; /* Deep Orange fill */
+            box-shadow: 0 0 5px #f97316;
+        }
+        /* --- END: Overflow EXP Styles --- */
+        
+        /* --- Icon Stacking Styles (Updated for horizontal layout) --- */
+        .stacked-icon {
+            transition: opacity 0.3s;
+            /* Base icon size */
+            font-size: 1.25rem; /* text-xl */
+        }
+
+
+        /* Modal backdrop for promotion screen and execution screen */
+        .modal-backdrop {
+            background-color: rgba(33, 28, 24, 0.9); /* Dark Stone Background with opacity */
+        }
+        
+    </style>
+    <!-- Firebase Imports -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, collection, query, addDoc, serverTimestamp, setLogLevel, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Enable Firebase debug logging
+        setLogLevel('Debug');
+
+        // IMPORTANT: Firebase setup variables (provided by the environment)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        
+        // --- FIX: Use a minimal placeholder config to prevent API Key error ---
+        const PLACEHOLDER_PROJECT_ID = "guild-roster-local-test";
+        
+        // Provide minimum config keys to allow initialization to proceed only if real keys are present.
+        const localFirebaseConfig = {
+            projectId: PLACEHOLDER_PROJECT_ID, 
+            authDomain: `${PLACEHOLDER_PROJECT_ID}.firebaseapp.com`
+        };
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : localFirebaseConfig;
+        // --- END FIX ---
+        
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let db = null;
+        let auth = null;
+        let userId = null;
+        let globalGuildName = 'Loading Grand Title...';
+        let globalGuildLogo = '❓'; // Default Logo
+        let globalGuildDescription = 'Loading description...'; // NEW: Guild Description
+        
+        // NEW: Global variable to track the student ID targeted for execution
+        let currentExecutionId = null; 
+        
+        // --- Core Game Data Definitions ---
+        
+        // List of themed logos for the dropdown
+        const LOGO_CHOICES = [
+            { emoji: '👑', name: 'Royal Crown', category: 'Noble/Royal' },
+            { emoji: '🏰', name: 'Castle Keep', category: 'Noble/Royal' },
+            { emoji: '⚔️', name: 'Crossed Swords', category: 'Warrior' },
+            { emoji: '🐉', name: 'Dragon Scale', category: 'Dark/Beast' },
+            { emoji: '💀', name: 'Skull Reaper', category: 'Dark/Ominous' },
+            { emoji: '🔮', name: 'Crystal Orb', category: 'Magical' },
+            { emoji: '✨', name: 'Magic Spark', category: 'Magical' },
+            { emoji: '🦉', name: 'Wise Owl', category: 'Scholarly' },
+            { emoji: '📜', name: 'Ancient Scroll', category: 'Scholarly' },
+            { emoji: '💰', name: 'Gold Coin', category: 'Merchant/Rogue' },
+            { emoji: '🌿', name: 'Forest Rune', category: 'Ranger/Nature' },
+            { emoji: '🍺', name: 'Mug of Ale', category: 'Fun/Tavern' },
+            // Added Logos
+            { emoji: '🔨', name: 'Mighty Hammer', category: 'Crafting/Artisan' },
+            { emoji: '⚙️', name: 'Clockwork Gear', category: 'Crafting/Artisan' },
+            { emoji: '☀️', name: 'Sun Crest', category: 'Divine/Celestial' },
+            { emoji: '🌙', name: 'Crescent Moon', category: 'Divine/Celestial' },
+            { emoji: '⚓', name: 'Salty Anchor', category: 'Nautical/Seafaring' }
+        ];
+        
+        // EXP required to reach the NEXT level (Leveling is capped at L6).
+        const LEVEL_THRESHOLDS = {
+            1: 0,
+            2: 10,  
+            3: 20, 
+            4: 30,  
+            5: 40,  
+            6: 50, // MASTER LEVEL (Overflow starts here)
+            7: 100 // Absolute EXP cap for Level 6 overflow tracking (Total 50 overflow XP)
+        };
+
+        // Emoji Icons for each Job Class
+        const JOB_ICONS = {
+            'Newbie': '🎒', 'Warrior': '🛡️', 'Mage': '🧙', 'Archer': '🏹', 'Assassin': '🔪',
+            'Knight': '🐴', 'Vanguard': '💪', 'Wizard': '🔥', 'Sorcerer': '✨',
+            'Sniper': '🎯', 'Ranger': '🌲', 'Rogue': '🗝️', 'Shadow': '🌑',
+            'Sentinel': '⚜️', 'Guardian': '🪓', 'Berserker': '🩸', 'Duelist': '🗡️',
+            'Archmage': '🪐', 'Rune Weaver': '🌀', 'Enchanter': '💫', 'Alchemist': '🧪',
+            'Deadeye': '👁️', 'Marksman': '📍', 'Warden': '🐻', 'Pathfinder': '🧭',
+            'Master Thief': '💎', 'Saboteur': '💣', 'Nightblade': '👻', 'Reaper': '💀',
+            // Pinnacle Classes (L5)
+            'Aegis Defender': '🛡️', 'High Inquisitor': '⚖️', 'Fortress Lord': '🗿', 'Warlord': '⚔️',
+            'Juggernaut': '👹', 'Doomslayer': '🌑', 'Blade Dancer': '🤺', 'Master Fencer': '🔱',
+            'Storm Caller': '⚡', 'Pyre Lord': '🔥', 'Chronomancer': '🌌', 'Void Seer': '⚫',
+            'Curse Weaver': '💬', 'Field Marshal': '🔮', 'Plague Doctor': '⚗️', 'Artificer': '🛠️',
+            'Bounty Hunter': '🔫', 'Sharpshooter': '🔭', 'Siege Master': '💥', 'Heavy Ordnance': '⚙️',
+            "Nature's Fury": '🐾', 'Druid': '🌳', 'Infiltrator': '🗺️', 'Wilderness Guide': '🏕️',
+            'Kingpin': '💵', 'Bank Breaker': '🔓', 'Engineer': '💥', 'Anarchist': '🧨',
+            'Vampire': '🦇', 'Shade Walker': '🌫️', 'Grim Culler': '⚰️', 'Deathbringer': '⚱️'
+        };
+
+        // --- FULL Job Progression Tree (L1 -> L6 Master) ---
+        const JOB_PROGRESSION_TREE = {
+            1: [ // Promotion to L2 (Base Class Choice)
+                { id: 'warrior', name: 'Warrior', desc: 'The brave fighter, specializing in melee combat and defense.' },
+                { id: 'mage', name: 'Mage', desc: 'The arcane scholar, focusing on magical power and elemental control.' },
+                { id: 'archer', name: 'Archer', desc: 'The swift hunter, master of ranged weaponry and tactical positioning.' },
+                { id: 'assassin', name: 'Assassin', desc: 'The silent operative, expert in stealth and lethal strikes.' }
+            ],
+            2: { // Promotion to L3 (Tier 2 Specialization)
+                'warrior': [
+                    { id: 'knight', name: 'Knight', desc: 'An armored defender, focusing on protection and mounted combat.' },
+                    { id: 'vanguard', name: 'Vanguard', desc: 'A fierce attacker, specializing in overwhelming offensive maneuvers.' }
+                ],
+                'mage': [
+                    { id: 'wizard', name: 'Wizard', desc: 'A master of raw, destructive elemental magic.' },
+                    { id: 'sorcerer', name: 'Sorcerer', desc: 'A wielder of subtle, reality-bending arcane magic.' }
+                ],
+                'archer': [
+                    { id: 'sniper', name: 'Sniper', desc: 'A precision specialist, capable of long-range disabling shots.' },
+                    { id: 'ranger', name: 'Ranger', desc: 'A wilderness expert, relying on traps and natural elements.' }
+                ],
+                'assassin': [
+                    { id: 'rogue', name: 'Rogue', desc: 'A stealthy opportunist, master of lock-picking and trap disarming.' },
+                    { id: 'shadow', name: 'Shadow', desc: 'A deadly infiltrator, specializing in critical strikes from darkness.' }
+                ]
+            },
+            3: { // Promotion to L4 (Tier 3 Advanced Class)
+                'knight': [
+                    { id: 'sentinel', name: 'Sentinel', desc: 'An unmoving bulwark, specializing in drawing enemy fire.' },
+                    { id: 'guardian', name: 'Guardian', desc: 'A benevolent protector, focusing on supporting allies.' }
+                ],
+                'vanguard': [
+                    { id: 'berserker', name: 'Berserker', desc: 'A rage-fueled warrior, sacrificing defense for massive damage.' },
+                    { id: 'duelist', name: 'Duelist', desc: 'A precise fighter, excelling in one-on-one combat.' }
+                ],
+                'wizard': [
+                    { id: 'archmage', name: 'Archmage', desc: 'An unparalleled master of elemental destruction.' },
+                    { id: 'rune-weaver', name: 'Rune Weaver', desc: 'A scribe of power, using ancient glyphs for complex effects.' }
+                ],
+                'sorcerer': [
+                    { id: 'enchanter', name: 'Enchanter', desc: 'A master of magical buffs and debuffs.' },
+                    { id: 'alchemist', name: 'Alchemist', desc: 'A potion expert, controlling the flow of battle with powerful concoctions.' }
+                ],
+                'sniper': [
+                    { id: 'deadeye', name: 'Deadeye', desc: 'A lethal marksman, specializing in weak-point targeting.' },
+                    { id: 'marksman', name: 'Marksman', desc: 'A versatile archer, adept at using various utility arrows.' }
+                ],
+                'ranger': [
+                    { id: 'warden', name: 'Warden', desc: 'A nature guardian, summoning beasts to aid in combat.' },
+                    { id: 'pathfinder', name: 'Pathfinder', desc: 'An expert navigator, setting complex traps and ambushes.' }
+                ],
+                'rogue': [
+                    { id: 'master-thief', name: 'Master Thief', desc: 'A specialist in wealth acquisition and bypassing high-security measures.' },
+                    { id: 'saboteur', name: 'Saboteur', desc: 'An agent of chaos, disabling enemy equipment and defenses.' }
+                ],
+                'shadow': [
+                    { id: 'nightblade', name: 'Nightblade', desc: 'A fighter who thrives in darkness, utilizing shadow magic.' },
+                    { id: 'reaper', name: 'Reaper', desc: 'A critical hit specialist, executing weakened targets instantly.' }
+                ]
+            },
+            4: { // Promotion to L5 (Tier 4 Pinnacle Class)
+                'sentinel': [
+                    { id: 'aegis-defender', name: 'Aegis Defender', desc: 'The ultimate tank, shielding entire teams from damage.' },
+                    { id: 'high-inquisitor', name: 'High Inquisitor', desc: 'A relentless pursuer of evil, delivering holy judgment.' }
+                ],
+                'guardian': [
+                    { id: 'fortress-lord', name: 'Fortress Lord', desc: 'A leader of men, granting powerful defensive bonuses to nearby allies.' },
+                    { id: 'warlord', name: 'Warlord', desc: 'A terrifying general, using fear and brute force to dominate.' }
+                ],
+                'berserker': [
+                    { id: 'juggernaut', name: 'Juggernaut', desc: 'An unstoppable force, gaining power the more damage they take.' },
+                    { id: 'doomslayer', name: 'Doomslayer', desc: 'A hunter of powerful monsters, delivering catastrophic blows.' }
+                ],
+                'duelist': [
+                    { id: 'blade-dancer', name: 'Blade Dancer', desc: 'A graceful fighter, relying on speed and intricate combos.' },
+                    { id: 'master-fencer', name: 'Master Fencer', desc: 'A weapon master, capable of disarming and crippling foes.' }
+                ],
+                'archmage': [
+                    { id: 'storm-caller', name: 'Storm Caller', desc: 'A summoner of tempests, specializing in electric and wind magic.' },
+                    { id: 'pyre-lord', name: 'Pyre Lord', desc: 'A devastating sorcerer, focusing on pure, destructive fire magic.' }
+                ],
+                'rune-weaver': [
+                    { id: 'chronomancer', name: 'Chronomancer', desc: 'A manipulator of time, altering cooldowns and speed.' },
+                    { id: 'void-seer', name: 'Void Seer', desc: 'A prophet of the abyss, utilizing dark and forbidden energy.' }
+                ],
+                'enchanter': [
+                    { id: 'curse-weaver', name: 'Curse Weaver', desc: 'A debilitating mage, specializing in powerful, permanent debuffs.' },
+                    { id: 'field-marshal', name: 'Field Marshal', desc: 'A tactical leader, enchanting allies with combat superiority.' }
+                ],
+                'alchemist': [
+                    { id: 'plague-doctor', name: 'Plague Doctor', desc: 'A master of poisons and debilitating toxins.' },
+                    { id: 'artificer', name: 'Artificer', desc: 'A crafter of magic devices, deploying automated turrets and barriers.' }
+                ],
+                'deadeye': [
+                    { id: 'bounty-hunter', name: 'Bounty Hunter', desc: 'A tracker of targets, gaining bonuses against high-value enemies.' },
+                    { id: 'sharpshooter', name: 'Sharpshooter', desc: 'A specialist in extreme range, capable of hitting any target.' }
+                ],
+                'marksman': [
+                    { id: 'siege-master', name: 'Siege Master', desc: 'A master of area damage, launching devastating cluster shots.' },
+                    { id: 'heavy-ordnance', name: 'Heavy Ordnance', desc: 'An engineer who utilizes massive, explosive weaponry.' }
+                ],
+                'warden': [
+                    { id: "nature's-fury", name: "Nature's Fury", desc: 'A powerful avatar, transforming into a mighty beast in battle.' },
+                    { id: 'druid', name: 'Druid', desc: 'A healer and shape-shifter, leveraging the pure essence of the wilds.' }
+                ],
+                'pathfinder': [
+                    { id: 'infiltrator', name: 'Infiltrator', desc: 'A master of disguise and information gathering.' },
+                    { id: 'wilderness-guide', name: 'Wilderness Guide', desc: 'A survival expert, making the wild an extension of themselves.' }
+                ],
+                'master-thief': [
+                    { id: 'kingpin', name: 'Kingpin', desc: 'A guild leader and criminal mastermind, optimizing illicit gains.' },
+                    { id: 'bank-breaker', name: 'Bank Breaker', desc: 'A legend of burglary, capable of cracking any vault.' }
+                ],
+                'saboteur': [
+                    { id: 'engineer', name: 'Engineer', desc: 'A master of explosive devices and complex traps.' },
+                    { id: 'anarchist', name: 'Anarchist', desc: 'A disruptive force, prioritizing mass chaos and confusion.' }
+                ],
+                'nightblade': [
+                    { id: 'vampire', name: 'Vampire', desc: 'A life-stealing combatant, regenerating health with every strike.' },
+                    { id: 'shade-walker', name: 'Shade Walker', desc: 'A ghost-like assassin, permanently cloaked in shadow.' }
+                ],
+                'reaper': [
+                    { id: 'grim-culler', name: 'Grim Culler', desc: 'A collector of souls, gaining power from every defeated foe.' },
+                    { id: 'deathbringer', name: 'Deathbringer', desc: 'A harbinger of doom, delivering guaranteed fatal strikes.' }
+                ]
+            }
+        };
+        // --- END FULL Job Progression Tree ---
+
+        // Map for fast lookup from job ID (lowercase, no spaces) to Icon
+        const ID_ICON_MAP = {}; 
+        
+        /** Populates the ID_ICON_MAP for icon stacking lookup. */
+        function populateIdIconMap() {
+            ID_ICON_MAP['newbie'] = '🎒'; // Base Newbie icon
+            
+            const addJobsToMap = (jobs) => {
+                jobs.forEach(job => ID_ICON_MAP[job.id] = JOB_ICONS[job.name] || '❓');
+            };
+
+            // Stage 1 (Base Jobs)
+            addJobsToMap(JOB_PROGRESSION_TREE[1]);
+
+            // Stage 2, 3, 4 (Specialization, Advanced, Pinnacle)
+            [JOB_PROGRESSION_TREE[2], JOB_PROGRESSION_TREE[3], JOB_PROGRESSION_TREE[4]].forEach(stage => {
+                for (const pathId in stage) {
+                    addJobsToMap(stage[pathId]);
+                }
+            });
+            // Add Master variants for all base jobs' IDs (just use their icon for the master version)
+            Object.keys(JOB_ICONS).forEach(name => {
+                const id = name.toLowerCase().replace(/\s/g, '-');
+                ID_ICON_MAP[id] = JOB_ICONS[name];
+                // For master level tracking (e.g., aegis-defender-master)
+                ID_ICON_MAP[id + '-master'] = JOB_ICONS[name]; 
+            });
+        }
+        
+        /** Retrieves the icon for a given job ID. */
+        const getIconForId = (jobId) => ID_ICON_MAP[jobId] || '❓';
+        
+        /** Renders the stacked HTML structure for the job history horizontally. */
+        function renderIconStack(historyIds) {
+            if (!historyIds || historyIds.length === 0) {
+                 // Fallback for a new student without an ID yet
+                return `<div class="flex items-center space-x-1"><span class="stacked-icon transition-transform" title="Newbie [Lvl 1]">${getIconForId('newbie')}</span></div>`;
+            }
+            
+            // --- Logic to filter out 'newbie' if a real job has been chosen ---
+            const hasRealJob = historyIds.length > 1 || (historyIds.length === 1 && historyIds[0] !== 'newbie');
+            const finalHistoryIds = hasRealJob ? historyIds.filter(id => id !== 'newbie') : historyIds;
+
+            if (finalHistoryIds.length === 0) {
+                 // Return single newbie icon
+                return `<div class="flex items-center space-x-1"><span class="stacked-icon transition-transform" title="Newbie [Lvl 1]">${getIconForId('newbie')}</span></div>`;
+            }
+            
+            // Iterate FORWARD: [L2, L3, L4, L5] -> Renders Left to Right (Latest on the right)
+            const iconElements = finalHistoryIds.map((jobId, index) => {
+                const icon = getIconForId(jobId);
+                // Level is L1 (for newbie) or L2 + index (index 0 is L2)
+                const level = hasRealJob ? (2 + index) : 1; 
+
+                // Clean up the job name for the title attribute
+                const jobName = jobId.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+
+                // Use ml-1 for spacing between icons (removed redundant ml-1 from the container usage)
+                return `
+                    <span 
+                        class="stacked-icon transition-transform" 
+                        title="${jobName} [Lvl ${level}]"
+                    >
+                        ${icon}
+                    </span>
+                `;
+            }).join('');
+            
+            // Wrap in a flex container for horizontal display (space-x-1 handles spacing)
+            return `
+                <div class="flex items-center space-x-1">
+                    ${iconElements}
+                </div>
+            `;
+        }
+
+
+        // Helper function to determine the level based on EXP
+        function getLevelForExp(exp) {
+            if (exp >= LEVEL_THRESHOLDS[6]) return 6; 
+            if (exp >= LEVEL_THRESHOLDS[5]) return 5;
+            if (exp >= LEVEL_THRESHOLDS[4]) return 4;
+            if (exp >= LEVEL_THRESHOLDS[3]) return 3;
+            if (exp >= LEVEL_THRESHOLDS[2]) return 2;
+            return 1;
+        }
+
+        // --- LOCAL TEST MODE IMPLEMENTATION ---
+        
+        let localStudents = []; // In-memory array for local mode
+
+        /** Runs the application in UI-only mode without database interaction. */
+        function runLocalTestMode() {
+            console.warn('Running in Local Test Mode: Firebase initialization skipped. Data will NOT persist or sync.');
+            
+            db = null; // Ensure db is null
+            userId = 'LOCAL-TEST-USER';
+            globalGuildName = 'The Guild Roster (LOCAL MODE)';
+            globalGuildLogo = '🧪'; 
+            globalGuildDescription = 'Data will not persist in this mode.'; // NEW: Local description
+            
+            populateLogoSelect();
+            renderHeader();
+            
+            // Display the Local Mode Warning
+            const authInfo = document.getElementById('auth-info');
+            authInfo.classList.remove('hidden');
+            authInfo.classList.remove('animate-spin'); 
+            authInfo.style.backgroundColor = '#fef3c7'; 
+            authInfo.style.borderColor = '#fbbf24'; 
+            authInfo.style.color = '#78350f'; 
+            authInfo.innerHTML = `
+                <p class="font-extrabold text-xl">LOCAL TEST MODE</p>
+                <p class="font-sans text-sm mt-1">Data persistence is disabled. Input a real Firebase config for saving.</p>
+            `;
+            
+            document.getElementById('main-app').classList.remove('hidden');
+
+            // --- Overwrite Data Functions with Local Logic ---
+
+            window.setGuildTitle = (newTitle, newLogo) => {
+                 globalGuildName = newTitle.trim() || 'Untitled Guild';
+                 globalGuildLogo = newLogo.trim() || '❓';
+                 renderHeader();
+                 document.getElementById('guild-title-edit-container').classList.add('hidden');
+                 console.warn('Guild title update saved locally (will not persist).');
+            };
+            
+            // Local update for description
+            window.updateGuildDescription = (newDesc) => {
+                globalGuildDescription = newDesc.trim() || 'No description set.';
+                renderHeader();
+                console.warn('Guild description updated locally (will not persist).');
+            };
+
+            window.addStudent = (name) => {
+                if (!name.trim()) return;
+                const newStudent = {
+                    id: crypto.randomUUID(),
+                    name: name.trim(),
+                    guild: globalGuildName, 
+                    exp: 0,
+                    level: 1,
+                    job: 'Newbie',
+                    progressionStage: 1, 
+                    jobHistoryIds: ['newbie'], 
+                    createdAt: new Date().getTime()
+                };
+                localStudents.push(newStudent);
+                renderStudents(localStudents);
+                document.getElementById('student-name').value = '';
+            };
+            
+            // NEW: Local Edit Student Name
+            window.editStudentName = (studentId) => {
+                const student = localStudents.find(s => s.id === studentId);
+                if (student) {
+                    // Use standard prompt for simple input edit
+                    const newName = prompt(`Enter the new name for Guild Member: ${student.name}`);
+                    if (newName !== null && newName.trim() !== '' && newName.trim() !== student.name) {
+                        student.name = newName.trim();
+                        renderStudents(localStudents);
+                        console.warn(`Local name updated for ${student.name}.`);
+                    }
+                }
+            };
+            
+            // NEW: Local Remove Student logic
+            function localRemoveStudent(studentId) {
+                const initialLength = localStudents.length;
+                localStudents = localStudents.filter(s => s.id !== studentId);
+                if (localStudents.length < initialLength) {
+                    renderStudents(localStudents);
+                }
+            }
+
+
+            // Local EXP Award Logic (simplified)
+            window.awardExp = (studentId, points) => {
+                const student = localStudents.find(s => s.id === studentId);
+                if (student) {
+                    const oldLevel = student.level;
+                    const oldProgressionStage = student.progressionStage;
+                    
+                    const rawNewExp = (student.exp || 0) + points;
+                    student.exp = Math.max(0, rawNewExp);
+                    student.level = getLevelForExp(student.exp); 
+                    
+                    let needsJobUpdate = false;
+                    let currentJobIdPath = student.jobHistoryIds?.[student.jobHistoryIds.length - 1] || 'newbie';
+
+                    // Progression check for level-up/job-up (Triggers choice for L2, L3, L4, L5)
+                    if (student.level > oldLevel && student.level <= 5) {
+                        // If current level reached is the trigger for the next choice (e.g., L2 reached, but stage is still 1)
+                        if (student.level - 1 === oldProgressionStage) {
+                            student.progressionStage = oldProgressionStage + 0.5; // Set to interim stage (e.g., 1.5)
+                            needsJobUpdate = true;
+                        }
+                    } else if (student.level === 6 && oldProgressionStage === 5) {
+                        // Automatic promotion to Master Class at L6 (stage 5 -> 6)
+                        const currentJobName = student.job;
+                        student.job = currentJobName.startsWith('Master ') ? currentJobName : `Master ${currentJobName}`;
+                        student.progressionStage = 6;
+                        // Add master version ID for stacking visual
+                        const masterJobId = currentJobName.toLowerCase().replace('master ', '').replace(/\s/g, '-') + '-master';
+                        if (!student.jobHistoryIds.includes(masterJobId)) {
+                             student.jobHistoryIds.push(masterJobId); 
+                        }
+                    }
+
+                    renderStudents(localStudents);
+                    console.warn(`Local EXP awarded to ${student.name}. Data will not persist.`);
+
+                    if (needsJobUpdate) {
+                        setTimeout(() => openJobModal(studentId, student.name, student.level, student.job, student.progressionStage, currentJobIdPath), 500);
+                    }
+                }
+            };
+            
+            // Local Job Update Logic (simplified)
+            window.updateJob = (studentId, jobName, progressionStage, newJobId) => {
+                 const student = localStudents.find(s => s.id === studentId);
+                 if(student) {
+                     student.job = jobName;
+                     // Set the new progression stage to the next whole number (e.g., 1.5 -> 2, 2.5 -> 3)
+                     student.progressionStage = Math.ceil(progressionStage);
+                     // Replace 'newbie' or add the new ID
+                     let newHistory = student.jobHistoryIds || ['newbie'];
+                     if(newHistory[0] === 'newbie' && newHistory.length === 1) {
+                        newHistory = [newJobId];
+                     } else {
+                        newHistory.push(newJobId);
+                     }
+                     student.jobHistoryIds = newHistory;
+                     
+                     closeJobModal();
+                     renderStudents(localStudents);
+                     console.warn(`Local Job updated for ${student.name}. Data will not persist.`);
+                 }
+            };
+            
+            // NEW: Local Execution Handlers (Override global ones for local mode)
+            window.confirmExecution = () => {
+                if (currentExecutionId) {
+                    localRemoveStudent(currentExecutionId);
+                }
+                document.getElementById('execution-modal').classList.add('hidden');
+                currentExecutionId = null;
+            };
+            window.cancelExecution = () => {
+                document.getElementById('execution-modal').classList.add('hidden');
+                currentExecutionId = null;
+            };
+
+
+            // Initial render
+            renderStudents(localStudents);
+        }
+
+        // --- Firebase Initialization and Auth ---
+
+        async function initFirebase() {
+            populateIdIconMap(); 
+            
+            // Check if we are running the local placeholder config
+            if (firebaseConfig.projectId === PLACEHOLDER_PROJECT_ID) {
+                runLocalTestMode();
+                return; // Stop Firebase initialization
+            }
+            
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                
+                document.getElementById('loading-message').textContent = 'Authenticating into the Realm...';
+
+                // Use the initialAuthToken if available, otherwise sign in anonymously.
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        console.log('User signed in. UID:', userId);
+                        document.getElementById('loading-message').textContent = `Authenticated. User ID: ${userId}`;
+                        populateLogoSelect(); 
+                        setupRealtimeListener();
+                        setupGuildListener(); 
+                        document.getElementById('main-app').classList.remove('hidden');
+                        
+                        // Display user info box
+                        const authInfo = document.getElementById('auth-info');
+                        authInfo.classList.remove('hidden');
+                        authInfo.classList.remove('animate-spin'); 
+                        authInfo.innerHTML = `
+                            <p class="text-sm font-sans">
+                                <strong>Realm ID:</strong> <span class="text-blue-400">${appId}</span>
+                                <br>
+                                <strong>Your ID:</strong> <span class="text-blue-400 text-xs break-all">${userId}</span>
+                            </p>
+                        `;
+
+                    } else {
+                        userId = crypto.randomUUID(); 
+                        console.error('Authentication failed, using random ID:', userId);
+                        document.getElementById('loading-message').textContent = 'Authentication error. Please refresh.';
+                    }
+                });
+
+            } catch (error) {
+                console.error("Firebase Initialization or Auth Error:", error);
+                document.getElementById('loading-message').textContent = `Failed to initialize: ${error.message}`;
+            }
+        }
+        
+        // --- UI & Config Functions ---
+        
+        function populateLogoSelect() {
+            const select = document.getElementById('guild-logo-select');
+            select.innerHTML = LOGO_CHOICES.map(logo => 
+                `<option value="${logo.emoji}" ${logo.emoji === globalGuildLogo ? 'selected' : ''}>${logo.emoji} ${logo.name} (${logo.category})</option>`
+            ).join('');
+        }
+
+        function toggleGuildTitleEdit() {
+            const container = document.getElementById('guild-title-edit-container');
+            container.classList.toggle('hidden');
+            if (!container.classList.contains('hidden')) {
+                document.getElementById('guild-title-input').value = globalGuildName;
+                document.getElementById('guild-logo-select').value = globalGuildLogo;
+            }
+        }
+        window.toggleGuildTitleEdit = toggleGuildTitleEdit; // Expose globally
+
+        function renderHeader() {
+            document.getElementById('guild-logo').textContent = globalGuildLogo;
+            document.getElementById('guild-name').textContent = globalGuildName;
+            
+            // Render Editable Description
+            const descElement = document.getElementById('guild-description-container');
+            if (descElement) {
+                descElement.textContent = globalGuildDescription;
+            }
+        }
+
+        function handleSaveGuildTitle() {
+            const titleInput = document.getElementById('guild-title-input');
+            const logoSelect = document.getElementById('guild-logo-select'); 
+            // Calls the global function, which is either the DB version or the local version
+            window.setGuildTitle(titleInput.value, logoSelect.value); 
+        }
+        window.handleSaveGuildTitle = handleSaveGuildTitle; // Expose globally
+
+        function handleAddStudent() {
+            const nameInput = document.getElementById('student-name');
+            window.addStudent(nameInput.value);
+        }
+        window.handleAddStudent = handleAddStudent; // Expose globally
+
+        // --- Firestore Data Functions (Only run if db is not null) ---
+
+        const getStudentsCollectionRef = () => collection(db, 'artifacts', appId, 'public', 'data', 'students');
+        const getGuildConfigRef = () => doc(db, 'artifacts', appId, 'public', 'data', 'config', 'global_settings');
+
+        function setupGuildListener() {
+            if (!db) return; // Guard for local mode
+            const guildRef = getGuildConfigRef();
+            onSnapshot(guildRef, (docSnap) => {
+                const defaultTitle = 'The Guild of Scholarly Heroes';
+                const defaultLogo = '🏰';
+                const defaultDesc = 'Master Class Edition (L6 Cap)'; // Default for the new field
+                
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    globalGuildName = data.guildTitle || defaultTitle;
+                    globalGuildLogo = data.guildLogo || defaultLogo;
+                    // Load description
+                    globalGuildDescription = data.guildDescription || defaultDesc; 
+                } else {
+                    globalGuildName = defaultTitle; 
+                    globalGuildLogo = defaultLogo;
+                    globalGuildDescription = defaultDesc;
+                    setDoc(guildRef, { guildTitle: defaultTitle, guildLogo: defaultLogo, guildDescription: defaultDesc }, { merge: true }).catch(e => console.error("Error setting default guild title:", e));
+                }
+                renderHeader();
+            }, (error) => {
+                console.error("Error setting up guild listener:", error);
+                globalGuildName = 'Title Load Error';
+                renderHeader();
+            });
+        }
+
+        function setupRealtimeListener() {
+            if (!db) return; // Guard for local mode
+            const q = query(getStudentsCollectionRef());
+            onSnapshot(q, (snapshot) => {
+                const students = [];
+                snapshot.forEach((doc) => {
+                    students.push({ id: doc.id, ...doc.data() });
+                });
+                renderStudents(students);
+            }, (error) => {
+                console.error("Error setting up student listener:", error);
+                document.getElementById('students-list').innerHTML = `<p class="text-red-600">Failed to load students: ${error.message}</p>`;
+            });
+        }
+        
+        async function setGuildTitle(newTitle, newLogo) {
+            if (!db) { console.error('Firestore not initialized.'); return; }
+            const logo = newLogo.trim() || '❓'; 
+            const title = newTitle.trim() || 'Untitled Guild';
+
+            const guildRef = getGuildConfigRef();
+            try {
+                await setDoc(guildRef, { 
+                    guildTitle: title,
+                    guildLogo: logo
+                }, { merge: true });
+                document.getElementById('guild-title-edit-container').classList.add('hidden');
+            } catch (error) {
+                console.error('Error setting guild title:', error);
+            }
+        }
+        window.setGuildTitle = setGuildTitle; // Expose globally for form submission
+
+        // Function to update only the description field
+        async function updateGuildDescription(newDesc) {
+            if (!db) { console.error('Firestore not initialized.'); return; }
+            const desc = newDesc.trim().substring(0, 100) || 'No description set.'; // Max 100 characters
+
+            const guildRef = getGuildConfigRef();
+            try {
+                await updateDoc(guildRef, { 
+                    guildDescription: desc
+                });
+            } catch (error) {
+                console.error('Error setting guild description:', error);
+            }
+        }
+        window.updateGuildDescription = updateGuildDescription; // Expose globally for onblur event
+
+        async function addStudent(name) {
+            if (!db) { console.error('Firestore not initialized.'); return; }
+            if (!name.trim()) return;
+
+            const newStudent = {
+                name: name.trim(),
+                guild: globalGuildName, 
+                exp: 0,
+                level: 1,
+                job: 'Newbie',
+                progressionStage: 1, 
+                jobHistoryIds: ['newbie'], // Start with the newbie ID
+                createdAt: serverTimestamp()
+            };
+
+            try {
+                await addDoc(getStudentsCollectionRef(), newStudent);
+                document.getElementById('student-name').value = '';
+            } catch (error) {
+                console.error('Error adding student:', error);
+            }
+        }
+        window.addStudent = addStudent; // Expose globally for form submission
+
+        // NEW: Firestore Edit Student Name
+        async function editStudentName(studentId, currentName) {
+            if (!db) { console.error('Firestore not initialized.'); return; }
+            
+            // Using prompt since it's a simple input requirement
+            const newName = prompt(`Enter the new name for Guild Member: ${currentName}`);
+            
+            if (newName !== null && newName.trim() !== '' && newName.trim() !== currentName) {
+                const studentRef = doc(getStudentsCollectionRef(), studentId);
+                try {
+                    await updateDoc(studentRef, { name: newName.trim() });
+                } catch (error) {
+                    console.error('Error editing student name:', error);
+                }
+            }
+        }
+        window.editStudentName = editStudentName; // Expose globally
+        
+        // NEW: Firestore Remove Student logic
+        async function removeStudent(studentId) {
+            if (!db) { console.error('Firestore not initialized.'); return; }
+            
+            const studentRef = doc(getStudentsCollectionRef(), studentId);
+            try {
+                await deleteDoc(studentRef);
+            } catch (error) {
+                console.error('Error removing student:', error);
+            }
+        }
+
+
+        async function awardExp(studentId, points) {
+            if (!db) { console.error('Firestore not initialized.'); return; }
+            
+            const studentRef = doc(getStudentsCollectionRef(), studentId);
+            const studentDoc = await getDoc(studentRef); 
+            
+            if (!studentDoc.exists()) {
+                console.error("Student not found for EXP award.");
+                return;
+            }
+            const studentData = studentDoc.data();
+            
+            const rawNewExp = (studentData.exp || 0) + points;
+            const newExp = Math.max(0, rawNewExp); 
+            
+            const oldLevel = studentData.level || 1;
+            const newLevel = getLevelForExp(newExp);
+            const oldProgressionStage = studentData.progressionStage || 1;
+
+            let updateData = {
+                exp: newExp,
+                level: newLevel
+            };
+            
+            let needsJobUpdate = false;
+            let newProgressionStage = oldProgressionStage;
+
+            // Progression check for level-up/job-up (Triggers choice for L2, L3, L4, L5)
+            if (newLevel > oldLevel && newLevel <= 5) {
+                // If current level reached is the trigger for the next choice (e.g., L2 reached, but stage is still 1)
+                if (newLevel - 1 === oldProgressionStage) {
+                    newProgressionStage = oldProgressionStage + 0.5; // Set to interim stage (e.g., 1.5)
+                    updateData.progressionStage = newProgressionStage;
+                    needsJobUpdate = true;
+                }
+            } else if (newLevel === 6 && oldProgressionStage === 5) {
+                // Automatic promotion to Master Class at L6 (stage 5 -> 6)
+                const currentJobName = studentData.job;
+                updateData.job = currentJobName.startsWith('Master ') ? currentJobName : `Master ${currentJobName}`;
+                updateData.progressionStage = 6;
+                
+                // Add the master version ID to history for display
+                const masterJobId = currentJobName.toLowerCase().replace('master ', '').replace(/\s/g, '-') + '-master';
+                // Only add if it's not already the last entry
+                let newHistory = studentData.jobHistoryIds || ['newbie'];
+                if (newHistory[newHistory.length - 1] !== masterJobId) {
+                    newHistory.push(masterJobId);
+                }
+                updateData.jobHistoryIds = newHistory;
+            }
+
+            try {
+                await updateDoc(studentRef, updateData);
+                
+                if (needsJobUpdate) {
+                    // Current progression stage determines the path key (the last chosen job ID)
+                    const currentJobIdPath = studentData.jobHistoryIds?.[studentData.jobHistoryIds.length - 1] || 'newbie';
+                    
+                    setTimeout(() => openJobModal(studentId, studentData.name, newLevel, studentData.job, newProgressionStage, currentJobIdPath), 500);
+                }
+            } catch (error) {
+                console.error('Error awarding EXP:', error);
+            }
+        }
+        window.awardExp = awardExp; // Expose globally
+
+        async function updateJob(studentId, jobName, progressionStage, newJobId) {
+            if (!db) { console.error('Firestore not initialized.'); return; }
+            
+            const studentRef = doc(getStudentsCollectionRef(), studentId);
+
+            // Set the new progression stage to the next whole number (e.g., 1.5 -> 2, 2.5 -> 3)
+            const completedProgressionStage = Math.ceil(progressionStage);
+            
+            try {
+                const studentDoc = await getDoc(studentRef);
+                const studentData = studentDoc.data();
+                
+                // Add the new job ID to the history array
+                let newHistory = studentData.jobHistoryIds || ['newbie'];
+                // Replace 'newbie' with the first chosen job ID, or append for subsequent choices.
+                 if(newHistory[0] === 'newbie' && newHistory.length === 1) {
+                    newHistory = [newJobId];
+                 } else {
+                    newHistory.push(newJobId);
+                 }
+
+
+                await updateDoc(studentRef, {
+                    job: jobName,
+                    progressionStage: completedProgressionStage,
+                    jobHistoryIds: newHistory
+                });
+                closeJobModal();
+            } catch (error) {
+                console.error('Error updating job:', error);
+            }
+        }
+        window.updateJob = updateJob; // Expose globally
+        
+        // --- Execution Modal Logic ---
+
+        function startExecution(studentId, studentName) {
+            currentExecutionId = studentId;
+            // Set the dramatic message with the member's name
+            document.getElementById('execution-message').innerHTML = `Do you truly wish to **EXECUTE** Guild Member: <span class="text-yellow-300 font-extrabold">${studentName}</span>?`;
+            document.getElementById('execution-modal').classList.remove('hidden');
+        }
+        window.startExecution = startExecution;
+
+        function confirmExecution() {
+            if (currentExecutionId) {
+                // Check if using DB or Local Mode and call the appropriate removal function
+                if (db) {
+                    removeStudent(currentExecutionId); // Firestore version
+                } else {
+                     localRemoveStudent(currentExecutionId); // Local version
+                }
+            }
+            document.getElementById('execution-modal').classList.add('hidden');
+            currentExecutionId = null;
+        }
+        window.confirmExecution = confirmExecution;
+
+        function cancelExecution() {
+            document.getElementById('execution-modal').classList.add('hidden');
+            currentExecutionId = null;
+        }
+        window.cancelExecution = cancelExecution;
+
+
+        // --- Rendering Functions ---
+
+        /** Renders the list of students. */
+        function renderStudents(students) {
+            const listContainer = document.getElementById('students-list');
+            
+            // Sort students by level (descending) and then EXP (descending)
+            students.sort((a, b) => {
+                if (b.level !== a.level) return b.level - a.level;
+                return b.exp - a.exp;
+            });
+
+            listContainer.innerHTML = students.map(student => {
+                const isMaster = student.level >= 6;
+                const nextLevel = Math.min(student.level + 1, 6); // Max level is 6 (Master)
+                const nextLevelExp = LEVEL_THRESHOLDS[nextLevel];
+                const currentLevelExp = LEVEL_THRESHOLDS[student.level];
+                
+                let progress = 0;
+                let expDisplay = `${student.exp}`;
+                let expContainerClass = 'bg-gray-200';
+                let expFillClass = 'exp-fill';
+                let expBarText = '';
+
+                if (isMaster) {
+                    // --- Master Level EXP Overflow Calculation ---
+                    const overflowThreshold = LEVEL_THRESHOLDS[6]; // 50
+                    const maxOverflowExp = LEVEL_THRESHOLDS[7] - overflowThreshold; // 100 - 50 = 50
+                    const expGainedSinceMaster = student.exp - overflowThreshold;
+
+                    // Calculate progress based on how much overflow has been gained out of the max (50), capped at 100%
+                    progress = Math.min(100, (expGainedSinceMaster / maxOverflowExp) * 100); 
+
+                    expDisplay = `${expGainedSinceMaster} / ${maxOverflowExp} Overflow XP`; // More accurate display
+                    expContainerClass = 'xp-overflow-card';
+                    expFillClass = 'xp-overflow-fill';
+                    expBarText = `<span class="absolute right-0 top-[-20px] text-xs font-bold xp-overflow-text">Overflow! +${expGainedSinceMaster}</span>`;
+                } else {
+                    // Standard Leveling
+                    const expNeeded = nextLevelExp - currentLevelExp;
+                    const expGained = student.exp - currentLevelExp;
+                    progress = (expGained / expNeeded) * 100;
+                    expDisplay = `${expGained} / ${expNeeded} XP to L${nextLevel}`;
+                }
+
+                // Determine promotion tag and button status
+                let jobTagClass = 'tag-job-active';
+                let promoteButtonHtml = '';
+                
+                if (student.job === 'Newbie') {
+                    jobTagClass = 'tag-newbie';
+                }
+
+                // Show promotion button if the progressionStage is an interim stage (e.g., 1.5, 2.5, 3.5, 4.5)
+                if (student.progressionStage % 1 !== 0) {
+                    jobTagClass = 'tag-job-available text-red-700 font-bold';
+                    // Pass currentJobIdPath (last job ID) to the modal function
+                    const currentJobIdPath = student.jobHistoryIds?.[student.jobHistoryIds.length - 1] || 'newbie'; 
+                    promoteButtonHtml = `
+                        <button onclick="openJobModal('${student.id}', '${student.name}', ${student.level}, '${student.job}', ${student.progressionStage}, '${currentJobIdPath}')" 
+                            class="btn-promote text-white font-bold py-2 px-4 rounded-full ml-4 text-sm whitespace-nowrap exp-btn">
+                            PROMOTE JOB L${student.level}
+                        </button>
+                    `;
+                } else if (isMaster) {
+                    jobTagClass = 'tag-master';
+                }
+
+                // Get Current Job Icon - Not used as a single large icon anymore (Correction 1)
+                // const currentJobId = student.jobHistoryIds?.[student.jobHistoryIds.length - 1] || 'newbie';
+                // const currentJobIcon = getIconForId(currentJobId.replace(/-master$/, '')); 
+
+
+                return `
+                    <div class="rpg-card p-4 mb-4 flex items-start space-x-4 ${isMaster ? 'xp-overflow-card' : ''}">
+                        
+                        <div class="flex-grow">
+                            <!-- Top Row: Name and Icon Stack -->
+                            <div class="flex items-center mb-0"> 
+                                <!-- Member Name -->
+                                <span class="text-2xl font-extrabold ${isMaster ? 'xp-overflow-text' : 'text-gray-800'} leading-none">
+                                    ${student.name}
+                                </span>
+                                <!-- Icon History Stack (Moved to horizontal display on right of name) -->
+                                <span class="inline-flex items-center ml-3 pt-1">
+                                    ${renderIconStack(student.jobHistoryIds)}
+                                </span>
+                            </div>
+
+                            <!-- New Row: Job/Class Name (Correction 2: Moved below name) -->
+                            <div class="flex justify-between items-center mb-2 mt-1">
+                                <p class="text-base font-semibold">
+                                    <span class="text-sm font-semibold rounded-full px-3 py-1 ${jobTagClass}">${student.job}</span>
+                                </p>
+                            </div>
+
+                            <!-- EXP Bar and Details -->
+                            <div class="relative exp-bar w-full mb-1 ${isMaster ? 'border-none' : ''} ${expContainerClass}">
+                                <div class="${expFillClass} h-full rounded-full" style="width: ${progress}%"></div>
+                                ${expBarText}
+                            </div>
+                            <div class="flex justify-between items-center text-xs font-semibold ${isMaster ? 'xp-overflow-text' : 'text-gray-600'}">
+                                <span>Level ${student.level}</span>
+                                <span>${expDisplay}</span>
+                            </div>
+                        </div>
+
+                        <!-- EXP Buttons & Promote Button + NEW: Edit/Remove Buttons -->
+                        <div class="flex-shrink-0 flex items-center space-x-2 pl-4 pt-2">
+                            <!-- NEW: Edit Button -->
+                            <button onclick="editStudentName('${student.id}', '${student.name}')" 
+                                class="text-white bg-blue-500 hover:bg-blue-600 font-bold p-2 rounded-md text-sm exp-btn" title="Edit Name">
+                                ✏️
+                            </button>
+                            
+                            <!-- NEW: Remove Button (Execution) -->
+                            <button onclick="startExecution('${student.id}', '${student.name}')" 
+                                class="text-white bg-red-800 hover:bg-red-900 font-bold p-2 rounded-md text-sm exp-btn" title="Remove Member (Execute)">
+                                💀
+                            </button>
+
+                            <!-- Minus EXP is -1 (from previous correction) -->
+                            <button onclick="awardExp('${student.id}', -1)" class="btn-penalty text-white font-bold py-2 px-3 rounded-md text-xs exp-btn" title="Deduct 1 XP">
+                                -1 XP
+                            </button>
+                            <!-- Remaining buttons unchanged -->
+                            <button onclick="awardExp('${student.id}', 1)" class="btn-exp-1 text-white font-bold py-2 px-3 rounded-md text-xs exp-btn" title="Award 1 XP">
+                                +1 XP
+                            </button>
+                            <button onclick="awardExp('${student.id}', 3)" class="btn-exp-2 text-white font-bold py-2 px-3 rounded-md text-xs exp-btn" title="Award 3 XP">
+                                +3 XP
+                            </button>
+                            <button onclick="awardExp('${student.id}', 5)" class="btn-exp-3 text-white font-bold py-2 px-3 rounded-md text-xs exp-btn" title="Award 5 XP">
+                                +5 XP
+                            </button>
+                            ${promoteButtonHtml}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            if (students.length === 0) {
+                listContainer.innerHTML = '<p class="text-center py-10 text-xl font-bold text-gray-500">The Roster is empty. Add a new Guild Member above!</p>';
+            }
+        }
+
+        /** Retrieves the progression options for the next job tier. */
+        function getJobProgressionOptions(currentJobIdPath, nextStage) {
+            // nextStage will be 2 (from stage 1.5), 3 (from stage 2.5), 4, or 5
+            const treeKey = nextStage - 1; // 1 (for L2 job tree), 2 (for L3), 3 (for L4), 4 (for L5)
+            
+            if (treeKey === 1) {
+                // First promotion (L1 to L2): shows all base jobs from stage 1
+                return JOB_PROGRESSION_TREE[1];
+            } else if (JOB_PROGRESSION_TREE[treeKey]) {
+                // Subsequent promotions: use the last chosen job ID as the path key
+                // Clean the ID path (remove '-master' suffix and lowercase)
+                const pathId = currentJobIdPath.toLowerCase().replace(/-master$/, '');
+                
+                const options = JOB_PROGRESSION_TREE[treeKey][pathId];
+                if (options) {
+                    return options;
+                }
+            }
+            // Fallback for an unknown path or final L5 tier (which should auto-promote to master)
+            return [];
+        }
+
+        /** Opens the job promotion modal. */
+        function openJobModal(studentId, name, level, currentJob, progressionStage, currentJobIdPath) {
+            const modal = document.getElementById('job-modal');
+            const modalContent = document.getElementById('job-modal-content');
+            
+            const nextStage = Math.ceil(progressionStage); // 1.5 -> 2, 2.5 -> 3, etc.
+            const jobOptions = getJobProgressionOptions(currentJobIdPath, nextStage);
+            
+            // This is primarily for the final L5 -> L6 promotion if the updateDoc logic failed to hide the button.
+            if (nextStage > 5 || jobOptions.length === 0) {
+                modalContent.innerHTML = `
+                    <div class="text-center p-8">
+                        <span class="text-6xl block mb-4">🏆</span>
+                        <h2 class="text-3xl font-extrabold text-gray-800">MASTER LEVEL REACHED!</h2>
+                        <p class="text-xl text-gray-600 mt-2">Congratulations, ${name} has ascended to the Master Class!</p>
+                        <button onclick="closeJobModal()" class="btn-exp-3 text-white font-bold py-2 px-6 rounded-full mt-6 text-sm exp-btn">
+                            Close Roster
+                        </button>
+                    </div>
+                `;
+                modal.classList.remove('hidden');
+                return;
+            }
+
+            const headerHtml = `
+                <div class="text-center border-b pb-4 mb-4 border-gray-400">
+                    <span class="text-4xl block mb-2">✨</span>
+                    <h2 class="text-3xl font-extrabold text-blue-800">Job Promotion Available!</h2>
+                    <p class="text-xl text-gray-700">${name} has reached L${level} and can now become a...</p>
+                    <p class="text-md text-gray-600 mt-1">Current Job: <span class="font-bold">${currentJob}</span></p>
+                </div>
+            `;
+            
+            // NOTE: The updateJob function call now passes 'newJobId' as the 4th argument.
+            const optionsHtml = jobOptions.map(job => `
+                <div class="job-card-modal p-4 rounded-lg cursor-pointer flex flex-col items-center text-center shadow-lg"
+                     onclick="window.updateJob('${studentId}', '${job.name}', ${progressionStage}, '${job.id}')"> 
+                    <span class="text-5xl mb-2">${JOB_ICONS[job.name] || '❓'}</span>
+                    <h3 class="text-2xl font-bold text-gray-800">${job.name}</h3>
+                    <p class="text-sm text-gray-600 mt-2 flex-grow">${job.desc}</p>
+                    <button class="btn-promote text-white font-bold py-2 px-4 rounded-full mt-4 text-sm exp-btn">
+                        CHOOSE ${job.name.toUpperCase()}
+                    </button>
+                </div>
+            `).join('');
+
+            modalContent.innerHTML = `
+                ${headerHtml}
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    ${optionsHtml}
+                </div>
+                <div class="text-center mt-6">
+                    <button onclick="closeJobModal()" class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 exp-btn">
+                        Cancel (Choose Later)
+                    </button>
+                </div>
+            `;
+
+            modal.classList.remove('hidden');
+        }
+        window.openJobModal = openJobModal; // Expose globally
+
+        /** Closes the job promotion modal. */
+        function closeJobModal() {
+            document.getElementById('job-modal').classList.add('hidden');
+        }
+        window.closeJobModal = closeJobModal; // Expose globally
+
+
+        // Start the application setup
+        window.onload = initFirebase;
+
+    </script>
+</head>
+<body class="min-h-screen">
+
+    <!-- Loading/Authentication Status -->
+    <div id="auth-info" class="fixed top-0 right-0 m-4 p-3 rounded-lg border-2 shadow-lg z-50 transition-all bg-gray-900 border-gray-700 text-gray-300 hidden animate-pulse">
+        <p id="loading-message" class="text-sm font-sans">Initializing Firebase...</p>
+    </div>
+
+    <div class="app-container relative">
+        <div id="loading-screen" class="absolute inset-0 bg-gray-900/50 flex items-center justify-center hidden">
+            <p class="text-xl font-bold text-white">Loading...</p>
+        </div>
+        
+        <!-- Main Application Content (Initially hidden until authenticated/local mode starts) -->
+        <div id="main-app" class="hidden relative z-10">
+
+            <!-- Guild Header -->
+            <header class="rpg-header text-center mb-6">
+                <div class="flex justify-center items-center group cursor-pointer" onclick="toggleGuildTitleEdit()">
+                    <span id="guild-logo" class="text-5xl transition-transform group-hover:scale-110 group-hover:rotate-6">🏰</span>
+                    <h1 id="guild-name" class="text-5xl font-black mx-4 transition-colors group-hover:text-red-500">The Grand Guild Roster</h1>
+                    <span class="text-2xl text-yellow-500 opacity-0 transition-opacity group-hover:opacity-100">✏️</span>
+                </div>
+                
+                <!-- Editable Guild Description Area -->
+                <div id="guild-description-container" 
+                     contenteditable="true" 
+                     class="text-xl font-bold text-gray-600 mt-2 p-1 rounded-md transition-colors hover:bg-gray-300/20 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                     onblur="window.updateGuildDescription(this.textContent)"
+                     title="Click to edit short description">
+                    <!-- Content set by JavaScript: globalGuildDescription -->
+                </div>
+            </header>
+
+            <!-- Guild Title Edit Container (Hidden by default) -->
+            <div id="guild-title-edit-container" class="hidden p-4 mb-6 rounded-lg border-2 shadow-inner">
+                <h3 class="text-xl font-bold mb-3 text-gray-800">Edit Guild Banner</h3>
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="flex-1">
+                        <label for="guild-title-input" class="block text-sm font-medium text-gray-700">Guild Name</label>
+                        <input type="text" id="guild-title-input" class="w-full p-2 mt-1 border rounded-md text-base" value="The Grand Guild Roster" placeholder="Enter new guild name">
+                    </div>
+                    <div class="w-full md:w-1/3">
+                        <label for="guild-logo-select" class="block text-sm font-medium text-gray-700">Guild Logo</label>
+                        <select id="guild-logo-select" class="w-full p-2 mt-1 border rounded-md text-base bg-white"></select>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3 mt-4">
+                    <button onclick="toggleGuildTitleEdit()" class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 exp-btn">Cancel</button>
+                    <button onclick="handleSaveGuildTitle()" class="btn-promote text-white font-bold py-2 px-4 rounded-md exp-btn">Save Changes</button>
+                </div>
+            </div>
+
+            <!-- Add Student Form -->
+            <div class="rpg-card p-4 mb-6">
+                <h3 class="text-xl font-bold mb-3 text-gray-800">Enroll New Guild Member</h3>
+                <div class="flex space-x-4">
+                    <input type="text" id="student-name" class="flex-grow p-3 border border-gray-400 rounded-md shadow-sm bg-white" placeholder="Enter member's name (e.g., Elara)">
+                    <button onclick="handleAddStudent()" class="btn-exp-3 text-white font-bold py-3 px-6 rounded-md exp-btn whitespace-nowrap">
+                        + Enroll
+                    </button>
+                </div>
+            </div>
+
+            <!-- Students List -->
+            <div id="students-list">
+                <!-- Students will be rendered here by renderStudents() -->
+                <p class="text-center py-10 text-xl font-bold text-gray-500">Awaiting Roster Data...</p>
+            </div>
+            
+            <footer class="text-center pt-8 text-sm text-gray-600">
+                <p>&copy; 2024 The Grand Guild Roster. All rights reserved.</p>
+            </footer>
+
+        </div>
+    </div>
+    
+    <!-- Job Promotion Modal -->
+    <div id="job-modal" class="modal-backdrop fixed inset-0 hidden flex items-center justify-center p-4 z-50">
+        <div class="relative bg-white p-8 rounded-lg shadow-2xl max-w-4xl w-full" id="job-modal-content">
+            <!-- Content dynamically generated by openJobModal() -->
+        </div>
+    </div>
+
+    <!-- NEW: Execution Confirmation Modal (Fun Prompt) -->
+    <div id="execution-modal" class="modal-backdrop fixed inset-0 hidden flex items-center justify-center p-4 z-50">
+        <div class="relative bg-red-900 p-8 rounded-lg shadow-2xl max-w-lg w-full border-4 border-red-500 text-white">
+            <div class="text-center">
+                <span class="text-6xl block mb-4 animate-pulse">💀</span>
+                <h2 class="text-3xl font-black text-yellow-300">The Great Tribunal</h2>
+                <p id="execution-message" class="text-xl text-white mt-4 mb-6 font-cinzel">
+                    <!-- Message filled by startExecution() -->
+                </p>
+                <div class="flex justify-center space-x-4">
+                    <button onclick="cancelExecution()" class="px-6 py-3 bg-gray-700 text-white rounded-full hover:bg-gray-800 exp-btn font-bold transition duration-150">
+                        Mercy (Cancel)
+                    </button>
+                    <button onclick="confirmExecution()" class="px-6 py-3 bg-red-600 text-white rounded-full hover:bg-red-700 exp-btn font-bold transition duration-150">
+                        Execute!
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</html>
